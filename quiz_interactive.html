@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Ôn Thi Thực Hành Linux CentOS 7 - 125 Câu Bứt Phá & Chống Bẫy</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: rgba(156, 163, 175, 0.5);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800 px-4 py-3 shadow-lg">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-red-500 flex items-center justify-center font-black text-xl text-white shadow-md shadow-amber-500/20">
+          🐧
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white flex items-center gap-2">
+            QUIZ THỰC HÀNH LINUX CENTOS 7
+            <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">125 Câu Thực Chiến</span>
+          </h1>
+          <p class="text-xs text-slate-400">Chống 14 bẫy phòng thi kinh điển • Ghi nhớ lệnh nhanh • Tự tin 100%</p>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="flex items-center gap-4 text-sm bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
+        <div>
+          <span class="text-slate-400 text-xs block">Đã làm:</span>
+          <span id="answered-count" class="font-bold text-amber-400">0</span>/<span id="total-count">125</span>
+        </div>
+        <div class="h-6 w-px bg-slate-700"></div>
+        <div>
+          <span class="text-slate-400 text-xs block">Chính xác:</span>
+          <span id="correct-count" class="font-bold text-emerald-400">0</span>
+          <span class="text-xs text-slate-500">(<span id="accuracy-rate">0%</span>)</span>
+        </div>
+        <div class="h-6 w-px bg-slate-700"></div>
+        <div>
+          <span class="text-slate-400 text-xs block">Điểm số:</span>
+          <span id="score-val" class="font-bold text-sky-400">0.0</span>/10
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Progress & Filter Tools -->
+    <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 mb-6 backdrop-blur shadow-sm">
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden mb-4">
+        <div id="progress-bar" class="bg-gradient-to-r from-amber-500 via-emerald-500 to-sky-500 h-full w-0 transition-all duration-300"></div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="setFilter('all')" class="filter-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 transition" data-filter="all">Tất cả (125)</button>
+          <button onclick="setFilter('trap')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-red-300 border border-red-500/30 transition flex items-center gap-1" data-filter="trap">🚨 Chỉ 14 Bẫy Phòng Thi</button>
+          <button onclick="setFilter('p1')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p1">P1: Nền tảng</button>
+          <button onclick="setFilter('p2')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p2">P2: Thao tác & vi</button>
+          <button onclick="setFilter('p3')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p3">P3: Ổ đĩa & Mount</button>
+          <button onclick="setFilter('p4')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p4">P4: User & Group</button>
+          <button onclick="setFilter('p5')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p5">P5: Quyền chmod/chown</button>
+          <button onclick="setFilter('p6')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p6">P6: C & Lệnh nâng cao</button>
+          <button onclick="setFilter('p7')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-slate-600 text-slate-300 transition" data-filter="p7">P7: Tình huống lỗi</button>
+        </div>
+
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <input type="text" id="search-input" oninput="handleSearch()" placeholder="Tìm từ khóa: chmod, fdisk, umount, -aG..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 w-full md:w-64 focus:outline-none focus:border-amber-500">
+          <button onclick="resetQuiz()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-950/50 hover:bg-rose-900 text-rose-300 border border-rose-800 transition whitespace-nowrap">Làm lại</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question List Container -->
+    <div id="quiz-list" class="space-y-4">
+      <!-- Questions rendered here by JS -->
+    </div>
+
+    <!-- Bottom summary alert -->
+    <div class="mt-8 p-6 bg-slate-800/80 border border-slate-700 rounded-2xl text-center">
+      <h3 class="text-lg font-bold text-amber-400 mb-2">Checklist 10 Điều Cần Thuộc Lòng Trước Giờ Nộp Bài</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-300 text-left max-w-4xl mx-auto mt-4">
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 1. Kiểm tra tài khoản đang đứng: <code class="text-amber-300">whoami</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 2. Kiểm tra vị trí thư mục hiện hành: <code class="text-amber-300">pwd</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 3. Dùng đường dẫn tuyệt đối bắt đầu bằng <code class="text-amber-300">/</code> nếu chưa chắc</div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 4. Kiểm tra quyền và chủ sở hữu file: <code class="text-amber-300">ls -la</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 5. Thao tác thư mục nhớ cờ đệ quy: <code class="text-amber-300">cp -r</code>, <code class="text-amber-300">rm -r</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 6. Thêm nhóm phụ BẮT BUỘC cờ: <code class="text-amber-300">usermod -aG</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 7. Đổi thư mục Home phải có cờ di chuyển dữ liệu: <code class="text-amber-300">-m</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 8. Trong fdisk phân vùng xong BẮT BUỘC ấn: <code class="text-amber-300">w</code> (write)</div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 9. Chạy file biên dịch bắt buộc có: <code class="text-amber-300">./hello</code></div>
+        <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">✅ 10. Trả quyền <code class="text-amber-300">chown user:user</code> nếu lỡ dùng root tạo file trong Home</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 125 Questions Data Set fully populated from Cẩm Nang Toàn Tập
+    const quizData = [
+      // P1: Câu 1 - 15
+      { id: 1, part: "p1", isTrap: false,
+        q: "Dấu nhắc lệnh '#' trên terminal CentOS 7 đại diện cho loại tài khoản nào và có số hiệu UID là bao nhiêu?",
+        options: ["A. Tài khoản người dùng thường, UID = 1000", "B. Tài khoản quản trị viên (root), UID = 0", "C. Tài khoản dịch vụ hệ thống, UID = 1", "D. Tài khoản khách (guest), UID = 999"],
+        ans: 1, explain: "Dấu '#' đại diện cho tài khoản quản trị viên tối cao root với UID = 0. Mẹo nhớ: Dấu '#' là vua (Root), dấu '$' là dân thường (Student/User)." },
+      { id: 2, part: "p1", isTrap: false,
+        q: "Trong CentOS 7, tài khoản người dùng thông thường (thường tạo ra cho sinh viên) có đặc điểm nào sau đây?",
+        options: ["A. Dấu nhắc lệnh là '#', UID = 0", "B. Dấu nhắc lệnh là '$', UID ≥ 1000", "C. Dấu nhắc lệnh là '%', UID < 500", "D. Dấu nhắc lệnh là '@', UID = 100"],
+        ans: 1, explain: "Người dùng thông thường có dấu nhắc lệnh là '$', UID được cấp phát mặc định từ 1000 trở lên (UID ≥ 1000)." },
+      { id: 3, part: "p1", isTrap: false,
+        q: "Thư mục '/root' trong hệ thống cây thư mục Linux có đặc điểm gì quan trọng?",
+        options: ["A. Là thư mục chứa mã nguồn của nhân Linux Kernel", "B. Là thư mục Home của người dùng root, quyền mặc định 700 (user thường bị cấm vào)", "C. Là thư mục tạm cho tất cả người dùng dùng chung", "D. Là thư mục gốc cao nhất chứa tất cả các thư mục con"],
+        ans: 1, explain: "'/root' là thư mục cá nhân (Home directory) của root, quyền 700 (rwx------), user thường cấm vào. Thư mục gốc cao nhất là '/'." },
+      { id: 4, part: "p1", isTrap: false,
+        q: "Thư mục '/tmp' trong hệ điều hành Linux được cấu hình cơ chế bảo mật đặc biệt nào?",
+        options: ["A. Quyền 000 cấm mọi người dùng can thiệp", "B. Cơ chế Sticky bit (quyền 1777): ai tạo tập tin thì chỉ người đó mới có quyền xóa", "C. Tự động xóa sạch sau mỗi 5 phút làm việc", "D. Chỉ tài khoản root mới có quyền tạo file trong thư mục này"],
+        ans: 1, explain: "'/tmp' có quyền 1777 (Sticky bit). Mọi người đều tạo/ghi được nhưng ai tạo file nào thì chỉ người đó (hoặc root) mới xóa được file đó." },
+      { id: 5, part: "p1", isTrap: false,
+        q: "Các tập tin đại diện cho thiết bị phần cứng (như ổ đĩa sda, sdb, phân vùng sdb1...) được hệ thống lưu trữ tại thư mục nào?",
+        options: ["A. /etc", "B. /mnt", "C. /dev", "D. /media"],
+        ans: 2, explain: "'/dev' (Device) chứa các file đại diện thiết bị phần cứng (sda, sdb, cdrom...)." },
+      { id: 6, part: "p1", isTrap: false,
+        q: "Thư mục '/etc' trong hệ thống Linux giữ vai trò gì?",
+        options: ["A. Chứa các file thực thi nhị phân của người dùng", "B. Chứa toàn bộ các tập tin cấu hình hệ thống (như passwd, group, shadow...)", "C. Chứa các điểm gắn kết tự động của USB", "D. Chứa dữ liệu nhật ký hệ thống"],
+        ans: 1, explain: "'/etc' là nơi lưu trữ tập trung các tập tin cấu hình hệ thống cốt lõi." },
+      { id: 7, part: "p1", isTrap: false,
+        q: "Điểm gắn kết (Mount point) các phân vùng ổ đĩa tạm thời thường được quy ước đặt tại thư mục nào?",
+        options: ["A. /media", "B. /mnt", "C. /dev", "D. /home"],
+        ans: 1, explain: "'/mnt' là điểm gắn các phân vùng ổ đĩa tạm thời do quản trị viên chỉ định. '/media' dành cho thiết bị ngoại vi gắn tự động (USB, CD-ROM)." },
+      { id: 8, part: "p1", isTrap: false,
+        q: "Phạm vi quyền hạn tối đa mặc định của một người dùng thông thường ('user') là gì?",
+        options: ["A. Có quyền xóa và tạo file tùy ý ngay tại thư mục gốc '/'", "B. Toàn quyền can thiệp vào thư mục /etc và /root", "C. Chỉ có toàn quyền trong thư mục cá nhân /home/<tên_user> của chính mình", "D. Không có quyền tạo bất kỳ tập tin nào trên toàn hệ thống"],
+        ans: 2, explain: "QUY TẮC QUAN TRỌNG: User thường chỉ có toàn quyền trong 'sân nhà' /home/<tên_mình>. Thao tác ra ngoài phải chuyển quyền root." },
+      { id: 9, part: "p1", isTrap: false,
+        q: "Đặc điểm phân biệt căn bản nhất giữa 'Đường dẫn tuyệt đối' và 'Đường dẫn tương đối' là gì?",
+        options: ["A. Đường dẫn tuyệt đối bắt đầu bằng tên file, tương đối bắt đầu bằng /", "B. Đường dẫn tuyệt đối luôn bắt đầu bằng dấu gạch chéo '/', đường dẫn tương đối bắt đầu bằng tên thư mục/file hoặc các ký hiệu ., ..", "C. Đường dẫn tương đối không bao giờ bị ảnh hưởng bởi vị trí thư mục đang đứng", "D. Đường dẫn tuyệt đối chỉ áp dụng cho tài khoản root"],
+        ans: 1, explain: "Tuyệt đối bắt đầu bằng '/' (tính từ gốc), chính xác 100% không phụ thuộc vị trí đứng. Tương đối phụ thuộc vị trí hiện tại." },
+      { id: 10, part: "p1", isTrap: false,
+        q: "Ký hiệu dấu chấm đơn '.' trong dòng lệnh Linux mang ý nghĩa gì?",
+        options: ["A. Thư mục Home của tài khoản hiện tại", "B. Thư mục cha cấp trên", "C. Đại diện cho chính thư mục hiện hành đang đứng", "D. Thư mục gốc của hệ thống"],
+        ans: 2, explain: "Dấu '.' đại diện cho thư mục hiện hành (ví dụ chạy file: ./hello)." },
+      { id: 11, part: "p1", isTrap: false,
+        q: "Ký hiệu hai dấu chấm '..' trong thao tác điều hướng đại diện cho:",
+        options: ["A. Thư mục con kế tiếp", "B. Thư mục cha (lùi lại 1 cấp thư mục)", "C. Trở về thư mục Home", "D. Xóa thư mục hiện tại"],
+        ans: 1, explain: "'..' đại diện cho thư mục cha cấp trên (ví dụ 'cd ..' lùi về 1 cấp)." },
+      { id: 12, part: "p1", isTrap: false,
+        q: "Ký hiệu dấu ngã '~' trên shell đại diện cho điều gì?",
+        options: ["A. Thư mục tạm /tmp", "B. Thư mục Home của tài khoản hiện tại", "C. Thư mục gốc /", "D. Thư mục cấu hình /etc"],
+        ans: 1, explain: "'~' là thư mục Home của tài khoản hiện tại (cd ~ tương đương cd /home/<user>)." },
+      { id: 13, part: "p1", isTrap: false,
+        q: "Đường dẫn nào sau đây là đường dẫn tương đối?",
+        options: ["A. /etc/passwd", "B. /home/student/Documents", "C. Documents/baitap.txt", "D. /var/log"],
+        ans: 2, explain: "Documents/baitap.txt không bắt đầu bằng '/', nó phụ thuộc vào vị trí hiện tại nên là đường dẫn tương đối." },
+      { id: 14, part: "p1", isTrap: false,
+        q: "Khuyến nghị vàng khi thi về cách sử dụng đường dẫn để tránh lỗi ngoài ý muốn là:",
+        options: ["A. Luôn dùng đường dẫn tương đối ngắn gọn", "B. Luôn ưu tiên dùng đường dẫn tuyệt đối bắt đầu bằng / nếu không chắc chắn", "C. Không bao giờ dùng đường dẫn tuyệt đối", "D. Chỉ dùng đường dẫn tuyệt đối khi đăng nhập guest"],
+        ans: 1, explain: "Checklist thi: Luôn ưu tiên đường dẫn tuyệt đối bắt đầu bằng / để chính xác 100%, không bị ảnh hưởng bởi thư mục hiện tại." },
+      { id: 15, part: "p1", isTrap: false,
+        q: "Tại thư mục gốc '/', người dùng bình thường ('student') có thể thực hiện thao tác nào sau đây?",
+        options: ["A. mkdir /ThucHanh", "B. touch /test.txt", "C. rm -rf /bin", "D. ls / để xem danh sách nội dung bên trong"],
+        ans: 3, explain: "Chỉ root mới được tạo/xóa tại '/'. User thường chỉ có quyền đọc/duyệt nội dung như 'ls /'." },
+
+      // P2: Câu 16 - 35
+      { id: 16, part: "p2", isTrap: false,
+        q: "Lệnh nào dùng để in ra đường dẫn đầy đủ của thư mục hiện hành đang làm việc?",
+        options: ["A. whoami", "B. pwd", "C. path", "D. dir"],
+        ans: 1, explain: "pwd (print working directory) in đường dẫn thư mục hiện hành." },
+      { id: 17, part: "p2", isTrap: false,
+        q: "Để hiển thị toàn bộ tập tin bên trong thư mục, bao gồm cả tập tin ẩn (bắt đầu bằng dấu chấm .), ta dùng lệnh:",
+        options: ["A. ls -l", "B. ls -a", "C. ls -h", "D. ls -d"],
+        ans: 1, explain: "ls -a hiển thị tất cả các file bao gồm file ẩn bắt đầu bằng dấu chấm '.'." },
+      { id: 18, part: "p2", isTrap: false,
+        q: "Lệnh 'ls -la' mang ý nghĩa kết hợp nào dưới đây?",
+        options: ["A. Liệt kê danh sách chi tiết (long) và hiện cả tập tin ẩn (all)", "B. Liệt kê theo bảng chữ cái và xóa file rác", "C. Liệt kê thư mục hiện hành và thư mục cha", "D. Liệt kê các file có dung lượng lớn nhất"],
+        ans: 0, explain: "-l (dạng danh sách chi tiết) kết hợp -a (tất cả bao gồm file ẩn)." },
+      { id: 19, part: "p2", isTrap: false,
+        q: "Đang đứng tại /home/student/Documents/Lab1, muốn lùi về 2 cấp thư mục (về /home/student), lệnh chuẩn là:",
+        options: ["A. cd ..", "B. cd ../..", "C. cd /2", "D. cd ..."],
+        ans: 1, explain: "cd ../.. lùi lại 2 cấp thư mục." },
+      { id: 20, part: "p2", isTrap: false,
+        q: "Muốn tạo chuỗi thư mục lồng nhau 'BaiTap/Chuong1/VD1' khi các thư mục cha chưa tồn tại, dùng cờ nào của mkdir?",
+        options: ["A. mkdir -r", "B. mkdir -p", "C. mkdir -f", "D. mkdir -a"],
+        ans: 1, explain: "Cờ -p (parents) tự động tạo chuỗi thư mục lồng nhau mà không báo lỗi nếu thư mục cha chưa có." },
+      { id: 21, part: "p2", isTrap: false,
+        q: "Lệnh 'touch test.txt' có tác dụng gì nếu tập tin test.txt chưa tồn tại?",
+        options: ["A. Báo lỗi không tìm thấy tập tin", "B. Tạo mới một tập tin rỗng có tên test.txt", "C. Mở trình soạn thảo đồ họa", "D. Xóa tập tin cũ"],
+        ans: 1, explain: "touch tạo file rỗng (0 byte) hoặc cập nhật mốc thời gian nếu file đã tồn tại." },
+      { id: 22, part: "p2", isTrap: false,
+        q: "Lệnh nào sau đây dùng để đọc nhanh toàn bộ nội dung của một file văn bản ra màn hình?",
+        options: ["A. touch", "B. cat", "C. mkdir", "D. cp"],
+        ans: 1, explain: "cat (concatenate) đọc và in nhanh toàn bộ nội dung file văn bản ra màn hình." },
+      { id: 23, part: "p2", isTrap: false,
+        q: "Trình soạn thảo văn bản vi hoạt động với mấy chế độ chính?",
+        options: ["A. 2 chế độ: Đọc và Ghi", "B. 3 chế độ: Command Mode, Insert Mode, Ex Mode", "C. 4 chế độ: Normal, Visual, Select, Replace", "D. 1 chế độ duy nhất"],
+        ans: 1, explain: "vi có 3 chế độ: Chế độ lệnh (Command Mode), Chế độ soạn thảo (Insert Mode) và Chế độ dòng lệnh (Ex Mode)." },
+      { id: 24, part: "p2", isTrap: false,
+        q: "Khi vừa mở file bằng lệnh 'vi filename', trình soạn thảo mặc định đang ở chế độ nào?",
+        options: ["A. Insert Mode", "B. Ex Mode", "C. Command Mode (Chế độ Lệnh)", "D. Replace Mode"],
+        ans: 2, explain: "Mặc định khi mở file, vi ở Chế độ Lệnh (Command Mode). Nhấn Esc để quay về chế độ này." },
+      { id: 25, part: "p2", isTrap: false,
+        q: "Trong vi (Command Mode), phím nào dùng để chuyển sang Insert Mode và chèn nội dung ngay TRƯỚC con trỏ?",
+        options: ["A. a", "B. i", "C. o", "D. p"],
+        ans: 1, explain: "Phím i (insert) chèn trước con trỏ. Phím a chèn sau, phím o mở dòng mới." },
+      { id: 26, part: "p2", isTrap: false,
+        q: "Trong vi (Command Mode), phím nào mở một dòng mới bên dưới con trỏ và đưa về chế độ soạn thảo?",
+        options: ["A. i", "B. o", "C. n", "D. Enter"],
+        ans: 1, explain: "Phím o mở một dòng mới bên dưới con trỏ và chuyển sang Insert Mode." },
+      { id: 27, part: "p2", isTrap: false,
+        q: "Thao tác xóa 1 ký tự và xóa nguyên 1 dòng trong vi (Command Mode) lần lượt là:",
+        options: ["A. d và dd", "B. x và dd", "C. del và yy", "D. backspace và clear"],
+        ans: 1, explain: "x xóa ký tự tại con trỏ; dd xóa nguyên dòng." },
+      { id: 28, part: "p2", isTrap: false,
+        q: "Thao tác sao chép dòng và dán dòng trong vi (Command Mode) lần lượt là:",
+        options: ["A. cc và vv", "B. yy và p", "C. cp và mv", "D. ctrl+c và ctrl+v"],
+        ans: 1, explain: "yy sao chép (yank) dòng; p dán (paste) dòng." },
+      { id: 29, part: "p2", isTrap: false,
+        q: "Trong vi, phím nào dùng để hoàn tác (undo) thao tác vừa thực hiện nhầm?",
+        options: ["A. Ctrl + Z", "B. u", "C. r", "D. Esc"],
+        ans: 1, explain: "Phím u (undo) hoàn tác thao tác gần nhất." },
+      { id: 30, part: "p2", isTrap: false,
+        q: "Để lưu các thay đổi và thoát khỏi vi, người dùng gõ lệnh nào tại Ex Mode?",
+        options: ["A. :q", "B. :w", "C. :wq", "D. :x!"],
+        ans: 2, explain: ":wq kết hợp lưu (w) và thoát (q) - phím dùng nhiều nhất." },
+      { id: 31, part: "p2", isTrap: false,
+        q: "Muốn thoát khỏi vi mà KHÔNG lưu bất kỳ chỉnh sửa nào (hủy bỏ mọi thao tác đã lỡ gõ sai), lệnh chuẩn là:",
+        options: ["A. :q", "B. :q!", "C. :exit", "D. :abort"],
+        ans: 1, explain: ":q! thoát ép buộc, hủy mọi thay đổi chưa lưu." },
+      { id: 32, part: "p2", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 3] Khi gõ lệnh sao chép thư mục 'cp BaiTap1 BaiTap1_backup', hệ thống báo lỗi: cp: omitting directory 'BaiTap1'. Nguyên nhân do đâu?",
+        options: ["A. Thư mục đích chưa được tạo sẵn", "B. Lệnh cp áp dụng cho thư mục BẮT BUỘC phải dùng cờ đệ quy -r (recursive)", "C. Không có quyền root thì không thể sao chép thư mục", "D. Tên thư mục không được chứa số"],
+        ans: 1, explain: "BẪY 3: Sao chép THƯ MỤC bắt buộc phải có cờ -r: 'cp -r BaiTap1 BaiTap1_backup'. Nếu thiếu -r sẽ báo lỗi omitting directory!" },
+      { id: 33, part: "p2", isTrap: false,
+        q: "Lệnh nào sau đây dùng để vừa di chuyển vừa đổi tên tập tin từ test.txt thành baitap.txt?",
+        options: ["A. cp test.txt baitap.txt", "B. mv test.txt baitap.txt", "C. rn test.txt baitap.txt", "D. touch test.txt baitap.txt"],
+        ans: 1, explain: "mv (move) dùng cho cả việc di chuyển tập tin và đổi tên tập tin/thư mục." },
+      { id: 34, part: "p2", isTrap: false,
+        q: "Lệnh xóa thư mục cưỡng chế, xóa sạch mọi file con bên trong mà không hỏi xác nhận là:",
+        options: ["A. rm -d", "B. rm -rf", "C. del /s", "D. rmdir -f"],
+        ans: 1, explain: "rm -rf (r: đệ quy thư mục, f: force ép buộc không hỏi xác nhận)." },
+      { id: 35, part: "p2", isTrap: false,
+        q: "Lệnh tắt nguồn máy ảo ngay lập tức (Power off) dưới quyền root là:",
+        options: ["A. shutdown -r now", "B. shutdown -P now", "C. shutdown -P +5", "D. exit -h"],
+        ans: 1, explain: "shutdown -P now: tắt nguồn máy ngay lập tức (-P = Power off). Cờ -r là Reboot." },
+
+      // P3: Câu 36 - 55
+      { id: 36, part: "p3", isTrap: false,
+        q: "Lệnh 'df -h' hiển thị thông tin gì trên hệ điều hành CentOS 7?",
+        options: ["A. Dung lượng thư mục hiện hành", "B. Dung lượng các phân vùng dạng dễ đọc con người (Human-readable: MB, GB)", "C. Tốc độ đọc ghi của đĩa", "D. Bộ nhớ RAM trống"],
+        ans: 1, explain: "df -h (disk free, human-readable) hiển thị dung lượng đĩa theo đơn vị GB/MB." },
+      { id: 37, part: "p3", isTrap: false,
+        q: "Muốn xem dung lượng phân vùng kèm theo loại định dạng filesystem (ext4, xfs, vfat...), ta dùng cờ nào?",
+        options: ["A. df -a", "B. df -T", "C. df -s", "D. df -l"],
+        ans: 1, explain: "df -T in thêm cột Type hiển thị chuẩn định dạng của từng phân vùng." },
+      { id: 38, part: "p3", isTrap: false,
+        q: "Để chỉ lọc và hiển thị riêng các phân vùng có định dạng ext4, cú pháp lệnh đúng là:",
+        options: ["A. df -type ext4", "B. df -t ext4", "C. df -f ext4", "D. df -ext4"],
+        ans: 1, explain: "df -t <type> dùng để lọc hiển thị riêng filesystem định dạng đó (chữ 't' thường lọc, chữ 'T' hoa in type)." },
+      { id: 39, part: "p3", isTrap: false,
+        q: "Lệnh nào sau đây dùng để liệt kê toàn bộ các ổ đĩa vật lý và bảng phân vùng hiện có trên hệ thống?",
+        options: ["A. fdisk /dev/sda", "B. fdisk -l", "C. mkfs -l", "D. mount -l"],
+        ans: 1, explain: "fdisk -l liệt kê toàn bộ các ổ cứng và phân vùng hiện có." },
+      { id: 40, part: "p3", isTrap: false,
+        q: "Để bắt đầu vào menu quản lý phân vùng của ổ đĩa thứ hai /dev/sdb, ta thực hiện lệnh nào dưới quyền root?",
+        options: ["A. fdisk /dev/sdb1", "B. fdisk /dev/sdb", "C. fdisk -n /dev/sdb", "D. format /dev/sdb"],
+        ans: 1, explain: "fdisk truyền vào tên ổ đĩa (/dev/sdb), không truyền tên phân vùng con sdb1." },
+      { id: 41, part: "p3", isTrap: false,
+        q: "Bên trong giao diện tương tác của fdisk, phím lệnh nào dùng để in bảng phân vùng hiện tại ra màn hình?",
+        options: ["A. m", "B. n", "C. p", "D. d"],
+        ans: 2, explain: "Phím p (print partition table) in bảng phân vùng hiện tại." },
+      { id: 42, part: "p3", isTrap: false,
+        q: "Bên trong giao diện fdisk, phím nào dùng để bắt đầu quy trình tạo một phân vùng mới?",
+        options: ["A. c", "B. n", "C. a", "D. new"],
+        ans: 1, explain: "Phím n (new partition) tạo phân vùng mới." },
+      { id: 43, part: "p3", isTrap: false,
+        q: "Khi tạo phân vùng kích thước 2GB trong fdisk, tại dòng 'Last sector', ta cần nhập giá trị nào?",
+        options: ["A. 2000", "B. 2G", "C. +2G", "D. +2048"],
+        ans: 2, explain: "Bắt buộc có dấu cộng: '+2G' biểu thị dung lượng tăng thêm 2 Gigabytes." },
+      { id: 44, part: "p3", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 8] Sau khi chia xong phân vùng trong fdisk, nếu thí sinh nhấn phím 'q' để thoát, điều gì sẽ xảy ra?",
+        options: ["A. Hệ thống tự động lưu toàn bộ", "B. Toàn bộ các phân vùng vừa tạo sẽ bị mất sạch vì 'q' là thoát KHÔNG LƯU", "C. Ổ cứng tự động format", "D. Máy ảo bị tắt"],
+        ans: 1, explain: "BẪY 8: Phím q là Quit mà KHÔNG LƯU thay đổi, mất sạch phân vùng vừa cấu hình. Bắt buộc phải nhấn phím 'w' (write)!" },
+      { id: 45, part: "p3", isTrap: false,
+        q: "Phím lệnh nào BẮT BUỘC phải nhấn để ghi cấu trúc phân vùng vào đĩa và kết thúc fdisk?",
+        options: ["A. s", "B. w", "C. x", "D. Enter"],
+        ans: 1, explain: "Phím w (write to disk) ghi dữ liệu phân vùng vào đĩa cứng và thoát." },
+      { id: 46, part: "p3", isTrap: false,
+        q: "Một phân vùng mới tạo (/dev/sdb1) có thể lưu file ngay được chưa và cần làm bước gì tiếp theo?",
+        options: ["A. Dùng được ngay", "B. Chưa dùng được, phải định dạng (mkfs) rồi gắn kết (mount) vào một thư mục", "C. Phải reboot máy mới dùng được", "D. Cần tạo user mới"],
+        ans: 1, explain: "Quy trình chuẩn: Phân vùng (fdisk) -> Định dạng (mkfs) -> Gắn kết (mount)." },
+      { id: 47, part: "p3", isTrap: false,
+        q: "Lệnh định dạng phân vùng /dev/sdb1 sang chuẩn filesystem ext4 là:",
+        options: ["A. format -t ext4 /dev/sdb1", "B. mkfs -t ext4 /dev/sdb1", "C. mount -t ext4 /dev/sdb1", "D. fdisk -t ext4 /dev/sdb1"],
+        ans: 1, explain: "mkfs -t ext4 /dev/sdb1 (mkfs = make filesystem)." },
+      { id: 48, part: "p3", isTrap: false,
+        q: "Lệnh định dạng phân vùng /dev/sdb2 sang chuẩn FAT32 là:",
+        options: ["A. mkfs -t fat32 /dev/sdb2", "B. mkfs -t vfat /dev/sdb2", "C. mkfs -t ntfs /dev/sdb2", "D. mkfs -t dos /dev/sdb2"],
+        ans: 1, explain: "Trong Linux, định dạng FAT32 được gọi là 'vfat' (mkfs -t vfat /dev/sdb2)." },
+      { id: 49, part: "p3", isTrap: false,
+        q: "Thao tác chuẩn bị trước khi mount phân vùng /dev/sdb1 vào hệ thống là:",
+        options: ["A. Không cần làm gì", "B. Tạo sẵn một thư mục rỗng làm điểm gắn (ví dụ: mkdir /mnt/p1)", "C. Xóa thư mục /mnt", "D. Đổi tên phân vùng"],
+        ans: 1, explain: "Bước 1 là tạo thư mục rỗng để làm Mount point: mkdir /mnt/p1." },
+      { id: 50, part: "p3", isTrap: false,
+        q: "Cú pháp lệnh gắn phân vùng /dev/sdb1 vào thư mục /mnt/p1 là:",
+        options: ["A. mount /mnt/p1 /dev/sdb1", "B. mount /dev/sdb1 /mnt/p1", "C. umount /dev/sdb1 /mnt/p1", "D. ln /dev/sdb1 /mnt/p1"],
+        ans: 1, explain: "Cú pháp: mount <phân_vùng> <thư_mục_gắn> (mount /dev/sdb1 /mnt/p1)." },
+      { id: 51, part: "p3", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 7] Đang đứng bên trong /mnt/p1 mà gõ lệnh 'umount /mnt/p1' bị báo lỗi: 'target is busy'. Cách khắc phục là:",
+        options: ["A. Thêm cờ -f", "B. Lùi ra ngoài thư mục gốc: gõ 'cd /' rồi mới thực hiện 'umount /mnt/p1'", "C. Khởi động lại máy", "D. Xóa thư mục /mnt/p1"],
+        ans: 1, explain: "BẪY 7: Đang đứng trong điểm gắn thì tài nguyên đang bận (target is busy). Bắt buộc phải thoát ra ngoài (cd /) rồi mới umount." },
+      { id: 52, part: "p3", isTrap: false,
+        q: "Hai cách gỡ gắn (Umount) một phân vùng đã mount là:",
+        options: ["A. Chỉ có 1 cách bằng tên phân vùng", "B. Gỡ theo tên phân vùng (umount /dev/sdb1) hoặc gỡ theo thư mục điểm gắn (umount /mnt/p1)", "C. Bắt buộc khởi động lại máy", "D. Dùng lệnh rmdir"],
+        ans: 1, explain: "Lệnh umount nhận đối số là tên phân vùng hoặc tên thư mục điểm gắn." },
+      { id: 53, part: "p3", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 11] Mount một phân vùng vào thư mục đang có sẵn dữ liệu thì điều gì xảy ra với dữ liệu cũ?",
+        options: ["A. Dữ liệu cũ bị xóa vĩnh viễn", "B. Dữ liệu cũ bị che khuất hoàn toàn, không thể thấy cho đến khi umount", "C. Tự động chuyển vào phân vùng mới", "D. Hệ thống từ chối mount"],
+        ans: 1, explain: "BẪY 11: Dữ liệu cũ bị che khuất tạm thời. Do đó luôn phải tạo thư mục rỗng hoàn toàn mới để làm Mount point." },
+      { id: 54, part: "p3", isTrap: false,
+        q: "Lệnh nào sau đây dùng để tìm tập tin test.txt trên TOÀN BỘ hệ thống (bắt đầu từ thư mục gốc)?",
+        options: ["A. find -name test.txt", "B. find / -name test.txt", "C. find /home -name test.txt", "D. search / test.txt"],
+        ans: 1, explain: "find / -name test.txt bắt đầu quét từ gốc / trên toàn bộ cây thư mục." },
+      { id: 55, part: "p3", isTrap: false,
+        q: "Lệnh 'find /home -name \"*.txt\"' sẽ thực hiện thao tác nào?",
+        options: ["A. Xóa file đuôi .txt", "B. Tìm toàn bộ các file đuôi .txt bên trong thư mục /home", "C. Đổi tên thành file ẩn", "D. Copy ra thư mục hiện tại"],
+        ans: 1, explain: "Tìm tất cả tập tin khớp mẫu *.txt bên trong /home." },
+
+      // P4: Câu 56 - 75
+      { id: 56, part: "p4", isTrap: false,
+        q: "Lệnh nào tạo user 'sv01' và ĐỒNG THỜI tự động khởi tạo thư mục /home/sv01?",
+        options: ["A. useradd sv01", "B. useradd -m sv01", "C. useradd -d sv01", "D. adduser -c sv01"],
+        ans: 1, explain: "useradd -m sv01 (cờ -m tự động sinh thư mục /home/sv01 và copy mẫu từ /etc/skel)." },
+      { id: 57, part: "p4", isTrap: false,
+        q: "Sau khi tạo user bằng useradd test, bước bắt buộc tiếp theo để user đăng nhập được là:",
+        options: ["A. Cấp quyền root", "B. Đặt mật khẩu bằng lệnh passwd test", "C. Gõ chown", "D. Khởi động lại máy"],
+        ans: 1, explain: "Phải đặt mật khẩu bằng passwd test (nhập 2 lần) thì tài khoản mới được kích hoạt." },
+      { id: 58, part: "p4", isTrap: false,
+        q: "Lệnh thêm thông tin ghi chú/mô tả họ tên (GECOS) cho tài khoản test là:",
+        options: ["A. usermod -g \"Nguyen Van A\" test", "B. usermod -c \"Nguyen Van A\" test", "C. usermod -m \"Nguyen Van A\" test", "D. passwd -c \"Nguyen Van A\" test"],
+        ans: 1, explain: "usermod -c (comment/GECOS) thêm mô tả họ tên cho tài khoản." },
+      { id: 59, part: "p4", isTrap: false,
+        q: "Để khóa tài khoản test (Lock), quản trị viên dùng lệnh:",
+        options: ["A. usermod -L test", "B. usermod -U test", "C. userdel test", "D. passwd -d test"],
+        ans: 0, explain: "usermod -L (Lock) khóa tài khoản." },
+      { id: 60, part: "p4", isTrap: false,
+        q: "Để mở khóa tài khoản test (Unlock) đã bị khóa, lệnh sử dụng là:",
+        options: ["A. usermod -K test", "B. usermod -U test", "C. usermod -O test", "D. passwd -u test"],
+        ans: 1, explain: "usermod -U (Unlock) mở khóa tài khoản." },
+      { id: 61, part: "p4", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 9] Lệnh 'userdel test' khác 'userdel -r test' ở điểm nào?",
+        options: ["A. Giống hệt nhau", "B. userdel test giữ lại thư mục /home/test tạo rác; còn userdel -r test xóa sạch cả thư mục /home/test", "C. -r chỉ xóa thư mục mà giữ lại user", "D. Không có cờ -r trong userdel"],
+        ans: 1, explain: "BẪY 9: userdel quên cờ -r sẽ để lại thư mục /home/test tồn tại rác hệ thống. Luôn dùng 'userdel -r test'!" },
+      { id: 62, part: "p4", isTrap: false,
+        q: "Phân biệt hai lệnh 'who' và 'whoami':",
+        options: ["A. who xem ai vừa tắt máy, whoami xem ai đang login", "B. who cho biết danh sách tài khoản login phiên ban đầu; whoami cho biết chính xác tài khoản đang trực tiếp gõ lệnh lúc này", "C. who chỉ root mới chạy được", "D. Hai lệnh hoàn toàn như nhau"],
+        ans: 1, explain: "who: tài khoản mở phiên làm việc ban đầu. whoami: tài khoản thực thi lệnh ngay lúc này." },
+      { id: 63, part: "p4", isTrap: false,
+        q: "Lệnh 'su test' khác với 'su - test' ở điểm nào?",
+        options: ["A. su test không cần pass", "B. su test giữ nguyên môi trường cũ; su - test nạp toàn bộ biến môi trường của user test", "C. su - test chỉ cấp quyền 1 phút", "D. Không có gì khác"],
+        ans: 1, explain: "su - test nạp toàn bộ biến môi trường của tài khoản đích và chuyển về Home của user đó." },
+      { id: 64, part: "p4", isTrap: false,
+        q: "Khi tài khoản root thực hiện 'su test' để chuyển sang user thường thì:",
+        options: ["A. Bắt buộc nhập pass root", "B. Bắt buộc nhập pass user test", "C. KHÔNG CẦN mật khẩu, chuyển ngay lập tức", "D. Bị từ chối quyền"],
+        ans: 2, explain: "Từ root sang user thường: KHÔNG CẦN mật khẩu (vì root là vua có quyền tuyệt đối)." },
+      { id: 65, part: "p4", isTrap: false,
+        q: "Khi user thường gõ 'su' để lên quyền root, mật khẩu cần nhập là mật khẩu của ai?",
+        options: ["A. Của chính user thường đó", "B. Mật khẩu của tài khoản root", "C. Mật khẩu VMware", "D. Không cần nhập"],
+        ans: 1, explain: "Từ user thường lên root: BẮT BUỘC nhập mật khẩu của root." },
+      { id: 66, part: "p4", isTrap: false,
+        q: "Lệnh nào dùng để thoát khỏi phiên tài khoản hiện tại quay lại tài khoản trước đó?",
+        options: ["A. quit", "B. exit", "C. close", "D. stop"],
+        ans: 1, explain: "exit thoát khỏi phiên tài khoản hiện tại, quay lại trước đó." },
+      { id: 67, part: "p4", isTrap: false,
+        q: "Lệnh tạo nhóm mới tên 'hocvien' là:",
+        options: ["A. groupcreate hocvien", "B. groupadd hocvien", "C. usergroup hocvien", "D. newgroup hocvien"],
+        ans: 1, explain: "groupadd hocvien tạo nhóm mới." },
+      { id: 68, part: "p4", isTrap: false,
+        q: "Lệnh thêm user 'test' vào nhóm 'hocvien' bằng groupmems là:",
+        options: ["A. groupmems -g hocvien -a test", "B. groupmems -u test -a hocvien", "C. groupmems -add test hocvien", "D. groupmems -g test -a hocvien"],
+        ans: 0, explain: "groupmems -g <nhóm> -a <user> (-a là add)." },
+      { id: 69, part: "p4", isTrap: false,
+        q: "Lệnh xem danh sách thành viên trong nhóm bằng groupmems là:",
+        options: ["A. groupmems -g hocvien -s", "B. groupmems -g hocvien -l", "C. groupmems -g hocvien -p", "D. groupmems -g hocvien -v"],
+        ans: 1, explain: "groupmems -g hocvien -l (-l là list thành viên)." },
+      { id: 70, part: "p4", isTrap: false,
+        q: "Lệnh 'id test' trả về những thông tin nào?",
+        options: ["A. Địa chỉ IP máy", "B. Xem UID, GID và các nhóm mà user test tham gia", "C. Mật khẩu chưa mã hóa", "D. Thời gian đăng nhập"],
+        ans: 1, explain: "id test in chi tiết UID, GID và danh sách tất cả các nhóm của user test." },
+      { id: 71, part: "p4", isTrap: false,
+        q: "Lệnh nào hiển thị danh sách tên các nhóm của user test ngắn gọn nhất?",
+        options: ["A. lsgroup test", "B. groups test", "C. who test", "D. cat test"],
+        ans: 1, explain: "groups test in danh sách tên các nhóm của user." },
+      { id: 72, part: "p4", isTrap: false,
+        q: "Để hiển thị toàn bộ nhóm hiện có trên hệ thống, ta dùng lệnh:",
+        options: ["A. getent group", "B. show groups", "C. list -g", "D. group -all"],
+        ans: 0, explain: "getent group hiển thị toàn bộ nhóm hiện có trên hệ điều hành." },
+      { id: 73, part: "p4", isTrap: false,
+        q: "Lệnh xóa user test ra khỏi nhóm hocvien bằng gpasswd là:",
+        options: ["A. gpasswd -r test hocvien", "B. gpasswd -d test hocvien", "C. gpasswd -u test hocvien", "D. gpasswd -x hocvien test"],
+        ans: 1, explain: "gpasswd -d test hocvien (-d = delete user khỏi nhóm)." },
+      { id: 74, part: "p4", isTrap: false,
+        q: "Lệnh xóa hoàn toàn nhóm hocvien khỏi hệ thống là:",
+        options: ["A. groupdel hocvien", "B. grouprm hocvien", "C. delgroup hocvien", "D. rm -g hocvien"],
+        ans: 0, explain: "groupdel hocvien xóa nhóm." },
+      { id: 75, part: "p4", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 10] Đang sửa đổi user test mà báo lỗi 'user test is currently used by process...', cách xử lý là:",
+        options: ["A. Reboot 3 lần", "B. Ngắt sạch tiến trình bằng lệnh 'pkill -u test' rồi mới tiến hành sửa đổi", "C. Xóa thư mục /proc", "D. Đổi pass thành rỗng"],
+        ans: 1, explain: "BẪY 10: User đang có tiến trình hoạt động không thể sửa đổi/xóa. Phải ngắt tiến trình bằng 'pkill -u test'." },
+
+      // P5: Câu 76 - 95
+      { id: 76, part: "p5", isTrap: false,
+        q: "Chuỗi 10 ký tự '-rwxr-xr--'. Ký tự đầu tiên '-' biểu thị điều gì?",
+        options: ["A. Thư mục", "B. Tập tin thông thường (regular file)", "C. Liên kết symlink", "D. File ẩn"],
+        ans: 1, explain: "Ký tự 1: '-' = file thông thường, 'd' = thư mục, 'l' = liên kết." },
+      { id: 77, part: "p5", isTrap: false,
+        q: "3 cụm quyền kế tiếp trong chuỗi 10 ký tự lần lượt đại diện cho ai?",
+        options: ["A. Others, Group, Owner", "B. u (User/Owner), g (Group), o (Others)", "C. Root, Guest, User", "D. Admin, Group, System"],
+        ans: 1, explain: "Thứ tự bất biến: u (Chủ sở hữu) -> g (Nhóm sở hữu) -> o (Người khác)." },
+      { id: 78, part: "p5", isTrap: false,
+        q: "Trọng số bát phân (Octal) của r, w, x và - lần lượt là:",
+        options: ["A. r=1, w=2, x=4, -=0", "B. r=4, w=2, x=1, -=0", "C. r=3, w=2, x=1, -=0", "D. r=4, w=3, x=2, -=1"],
+        ans: 1, explain: "Read = 4, Write = 2, Execute = 1, None = 0." },
+      { id: 79, part: "p5", isTrap: false,
+        q: "Chuỗi quyền 'rwxr-xr-x' tương ứng với chỉ số Octal nào?",
+        options: ["A. 777", "B. 755", "C. 644", "D. 754"],
+        ans: 1, explain: "rwx = 4+2+1 = 7; r-x = 4+0+1 = 5; r-x = 5 => 755." },
+      { id: 80, part: "p5", isTrap: false,
+        q: "Chuỗi quyền 'rw-r--r--' tương ứng với chỉ số Octal nào?",
+        options: ["A. 755", "B. 644", "C. 664", "D. 600"],
+        ans: 1, explain: "rw- = 4+2+0 = 6; r-- = 4; r-- = 4 => 644." },
+      { id: 81, part: "p5", isTrap: false,
+        q: "Quyền Read (r) đối với Tập tin và Thư mục có ý nghĩa lần lượt là:",
+        options: ["A. File: thực thi; Thư mục: đổi tên", "B. File: đọc nội dung (cat, vi); Thư mục: liệt kê danh sách file bên trong (ls)", "C. File: xóa; Thư mục: cd vào", "D. Giống hệt nhau"],
+        ans: 1, explain: "File: đọc nội dung; Thư mục: liệt kê danh sách file bên trong bằng lệnh ls." },
+      { id: 82, part: "p5", isTrap: false,
+        q: "Quyền Write (w) đối với THƯ MỤC mang ý nghĩa quyết định nào?",
+        options: ["A. Chỉ sửa nội dung file", "B. Tạo mới, xóa, đổi tên các tập tin bên trong thư mục", "C. Đổi pass thư mục", "D. Xem dung lượng"],
+        ans: 1, explain: "Quyền w trên thư mục cho phép tạo mới, xóa, đổi tên file con bên trong." },
+      { id: 83, part: "p5", isTrap: false,
+        q: "Quyền Execute (x) đối với Tập tin và Thư mục có ý nghĩa lần lượt là:",
+        options: ["A. File: copy; Thư mục: move", "B. File: thực thi file chương trình (./); Thư mục: truy cập, đi vào bên trong thư mục (cd)", "C. File: xóa; Thư mục: sửa tên", "D. Cả hai đều không có tác dụng"],
+        ans: 1, explain: "File: thực thi chương trình (./); Thư mục: cho phép truy cập, đi vào thư mục (cd)." },
+      { id: 84, part: "p5", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 14] Thư mục 'mydir' có quyền 444 (r--r--r--). Gõ 'cd mydir' thì bị lỗi gì và vì sao?",
+        options: ["A. Vào bình thường", "B. Bị lỗi 'Permission denied' vì muốn đi vào thư mục bằng lệnh cd BẮT BUỘC phải có quyền x (Execute)", "C. Bị treo terminal", "D. Tự động chuyển quyền"],
+        ans: 1, explain: "BẪY 14: Quyền r chỉ xem được danh sách bằng ls. Muốn đi vào thư mục (cd) bắt buộc phải có quyền x (Execute)!" },
+      { id: 85, part: "p5", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 13] File có quyền 444 (chỉ đọc), thuộc root. Nhưng thư mục chứa nó có quyền 777 (rwx) cho user. User có XÓA được file đó không?",
+        options: ["A. Không thể xóa vì file chỉ đọc", "B. HOÀN TOÀN XÓA ĐƯỢC! Vì hành động xóa file thực chất là sửa đổi bảng thư mục (cần quyền Write trên thư mục)", "C. Chỉ xóa được vào ban đêm", "D. Hệ thống khóa tài khoản"],
+        ans: 1, explain: "BẪY 13: Xóa file là quyền ghi trên thư mục cha, KHÔNG phụ thuộc vào quyền của bản thân file đó!" },
+      { id: 86, part: "p5", isTrap: false,
+        q: "Lệnh đổi quyền đệ quy cho cả thư mục và các tập tin con bên trong là:",
+        options: ["A. chmod -r 755 /dir", "B. chmod -R 755 /dir", "C. chmod --all 755 /dir", "D. chmod -p 755 /dir"],
+        ans: 1, explain: "chmod -R (chữ R HOA) áp dụng đệ quy (Recursive)." },
+      { id: 87, part: "p5", isTrap: false,
+        q: "Lệnh 'chmod u+x hello' mang ý nghĩa gì?",
+        options: ["A. Thêm quyền chạy cho tất cả", "B. Thêm quyền thực thi (Execute) riêng cho Chủ sở hữu (Owner/User)", "C. Tước quyền chạy", "D. Đổi tên file"],
+        ans: 1, explain: "u+x: Thêm quyền thực thi riêng cho Owner." },
+      { id: 88, part: "p5", isTrap: false,
+        q: "Lệnh 'chmod g-w tailieu.txt' mang ý nghĩa gì?",
+        options: ["A. Tước bỏ quyền ghi của Nhóm sở hữu (Group)", "B. Thêm quyền ghi cho Group", "C. Tước quyền đọc", "D. Đổi nhóm sở hữu"],
+        ans: 0, explain: "g-w: Tước bỏ quyền ghi (Write) của Group." },
+      { id: 89, part: "p5", isTrap: false,
+        q: "Lệnh 'chmod 700 baimat.txt' thiết lập quyền thế nào?",
+        options: ["A. Mọi người đều có toàn quyền", "B. Chỉ Owner có toàn quyền (rwx), cấm hoàn toàn Group và Others", "C. Group toàn quyền", "D. Khóa toàn bộ"],
+        ans: 1, explain: "700 = rwx ------ : Chỉ Owner có quyền, cấm Group và Others." },
+      { id: 90, part: "p5", isTrap: false,
+        q: "Lệnh đổi Chủ sở hữu file hello.c thành user test là:",
+        options: ["A. chgrp test hello.c", "B. chown test hello.c", "C. chmod test hello.c", "D. usermod test hello.c"],
+        ans: 1, explain: "chown (change owner) đổi chủ sở hữu file." },
+      { id: 91, part: "p5", isTrap: false,
+        q: "Lệnh 'chown test:hocvien hello.c' thực hiện thao tác gì?",
+        options: ["A. Đổi tên file", "B. Chuyển Owner thành test ĐỒNG THỜI chuyển Group thành hocvien", "C. Chỉ đổi group", "D. Báo lỗi cú pháp"],
+        ans: 1, explain: "chown user:group đổi đồng thời cả chủ sở hữu và nhóm sở hữu." },
+      { id: 92, part: "p5", isTrap: false,
+        q: "Để CHỈ đổi nhóm sở hữu thành hocvien mà giữ nguyên Owner, hai lệnh nào sau đây đều đúng?",
+        options: ["A. chown hocvien file và chmod hocvien file", "B. chown :hocvien hello.c và chgrp hocvien hello.c", "C. chown test: file và groupadd hocvien", "D. groupmems hocvien file"],
+        ans: 1, explain: "chown :hocvien file hoặc chgrp hocvien file đều đổi nhóm sở hữu." },
+      { id: 93, part: "p5", isTrap: false,
+        q: "Lệnh tạo liên kết cứng (Hard Link) có cú pháp là:",
+        options: ["A. ln -s nguồn link", "B. ln <nguồn> <link>", "C. link -h nguồn link", "D. cp -l nguồn link"],
+        ans: 1, explain: "ln <nguồn> <link> tạo Hard Link (không có cờ -s)." },
+      { id: 94, part: "p5", isTrap: false,
+        q: "Bản chất Inode khác biệt giữa lệnh cp (sao chép) và lệnh ln (liên kết cứng) là gì?",
+        options: ["A. cp tạo bản sao độc lập (Inode mới); còn ln cùng trỏ tới một số hiệu Inode dữ liệu gốc", "B. cp tự cập nhật khi sửa", "C. ln nhân đôi dung lượng", "D. cp không làm việc với thư mục"],
+        ans: 0, explain: "cp tạo bản sao độc lập Inode mới; ln cùng trỏ tới một số hiệu Inode dữ liệu gốc (sửa 1 bên, bên kia đổi theo)." },
+      { id: 95, part: "p5", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 12] Thực hiện lệnh 'ln /mnt/p1/file.txt /mnt/p2/file.txt' bị báo lỗi: 'Invalid cross-device link'. Vì sao?",
+        options: ["A. Tên file trùng", "B. Liên kết cứng (Hard Link) KHÔNG THỂ liên kết khác phân vùng ổ đĩa (chỉ Soft link ln -s mới làm được)", "C. Phân vùng p2 bị hỏng", "D. Không đủ RAM"],
+        ans: 1, explain: "BẪY 12: Hard link chỉ hoạt động trong CÙNG MỘT phân vùng. Xuyên phân vùng ổ đĩa bắt buộc phải dùng Symbolic Link (ln -s). Hard link cũng không dùng được cho thư mục." },
+
+      // P6: Câu 96 - 110
+      { id: 96, part: "p6", isTrap: false,
+        q: "Lệnh kiểm tra phiên bản trình biên dịch GCC trên CentOS 7 là:",
+        options: ["A. gcc -check", "B. gcc --version", "C. gcc -v -all", "D. compile -v"],
+        ans: 1, explain: "gcc --version kiểm tra trình biên dịch GCC." },
+      { id: 97, part: "p6", isTrap: false,
+        q: "Cú pháp biên dịch file mã nguồn hello.c thành file thực thi hello là:",
+        options: ["A. gcc hello -o hello.c", "B. gcc hello.c -o hello", "C. gcc -c hello.c hello", "D. compile hello.c -out hello"],
+        ans: 1, explain: "gcc hello.c -o hello (-o chỉ định output thực thi)." },
+      { id: 98, part: "p6", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 1] Biên dịch xong, gõ lệnh 'hello' bị lỗi: 'bash: hello: command not found'. Vì sao?",
+        options: ["A. Lỗi code C", "B. Thư mục hiện tại không nằm trong biến môi trường $PATH. Bắt buộc phải gõ './hello'", "C. Chưa cài bash", "D. Hết RAM"],
+        ans: 1, explain: "BẪY 1: Thư mục hiện hành '.' không thuộc $PATH. Bắt buộc phải thêm tiền tố: ./hello." },
+      { id: 99, part: "p6", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 2] Gõ './hello' bị báo lỗi: 'bash: ./hello: Permission denied'. Cách xử lý là:",
+        options: ["A. Xóa file biên dịch lại", "B. Cấp quyền thực thi trước: 'chmod +x hello', sau đó chạy lại './hello'", "C. Chuyển sang /tmp", "D. Đổi tên thành hello.exe"],
+        ans: 1, explain: "BẪY 2: File thiếu cờ execute (x). Cấp quyền chạy trước: chmod +x hello." },
+      { id: 100, part: "p6", isTrap: false,
+        q: "Tập tin /etc/passwd gồm bao nhiêu trường và phân tách bởi ký tự gì?",
+        options: ["A. 6 trường, dấu ;", "B. 7 trường, phân tách bởi dấu hai chấm ':'", "C. 8 trường, dấu -", "D. 5 trường, dấu cách"],
+        ans: 1, explain: "/etc/passwd có đúng 7 trường phân tách bằng dấu hai chấm ':'." },
+      { id: 101, part: "p6", isTrap: false,
+        q: "Trong dòng '/etc/passwd', ký tự 'x' ở trường thứ 2 mang ý nghĩa gì?",
+        options: ["A. Không có pass", "B. Pass bị xóa", "C. Mật khẩu mã hóa bảo mật được lưu tại tập tin /etc/shadow", "D. Tài khoản bị khóa"],
+        ans: 2, explain: "Ký tự 'x' nghĩa là hash mật khẩu thực sự được lưu an toàn tại /etc/shadow." },
+      { id: 102, part: "p6", isTrap: false,
+        q: "Thứ tự 7 trường trong /etc/passwd từ trái sang phải là:",
+        options: ["A. Username -> Pass(x) -> UID -> GID chính -> Mô tả GECOS -> Home -> Shell", "B. Username -> UID -> GID -> Pass -> Shell -> Home -> GECOS", "C. UID -> Username -> Home -> Shell -> Pass -> GID -> GECOS", "D. Username -> Shell -> Home -> UID -> GID -> GECOS -> Pass"],
+        ans: 0, explain: "Thứ tự: (1) Username -> (2) x -> (3) UID -> (4) GID chính -> (5) GECOS -> (6) Home -> (7) Shell." },
+      { id: 103, part: "p6", isTrap: false,
+        q: "Tập tin /etc/shadow chứa thông tin gì và ai có quyền đọc?",
+        options: ["A. Ai cũng đọc được", "B. Chứa hash mật khẩu bảo mật (chỉ root được phép đọc)", "C. Chứa lịch sử duyệt web", "D. Chứa danh sách tiến trình"],
+        ans: 1, explain: "/etc/shadow chứa hash mật khẩu và chỉ có root mới được đọc." },
+      { id: 104, part: "p6", isTrap: false,
+        q: "Thư mục '/etc/skel' giữ chức năng gì trong hệ điều hành?",
+        options: ["A. Chứa file C mẫu", "B. Chứa các tập tin mẫu (.bashrc, .bash_profile...) tự động copy sang thư mục Home khi tạo user mới", "C. Bản sao lưu kernel", "D. Chứa ổ cứng hỏng"],
+        ans: 1, explain: "/etc/skel chứa file cấu hình mẫu tự động sao chép sang Home khi tạo user mới." },
+      { id: 105, part: "p6", isTrap: false,
+        q: "Tập tin '/etc/login.defs' chứa các thông số nào?",
+        options: ["A. Lịch sử lệnh", "B. Chứa các tham số mặc định khi tạo user (PASS_MAX_DAYS, UID_MIN...)", "C. Cấu hình IP", "D. Mã nguồn Linux"],
+        ans: 1, explain: "/etc/login.defs chứa chính sách mật khẩu và tham số khởi tạo user." },
+      { id: 106, part: "p6", isTrap: false,
+        q: "Lệnh kiểm tra chính sách hết hạn mật khẩu của user test là:",
+        options: ["A. passwd -check test", "B. chage -l test", "C. usermod -p test", "D. id -pass test"],
+        ans: 1, explain: "chage -l <user> kiểm tra chính sách hạn mật khẩu." },
+      { id: 107, part: "p6", isTrap: false,
+        q: "Lệnh đổi tên đăng nhập (Username) từ 'test' thành 'sv2024' là:",
+        options: ["A. usermod -u sv2024 test", "B. usermod -l sv2024 test", "C. usermod -n sv2024 test", "D. groupmod -l sv2024 test"],
+        ans: 1, explain: "usermod -l <tên_mới> <tên_cũ> (-l = login name)." },
+      { id: 108, part: "p6", isTrap: false,
+        q: "Lệnh đổi số hiệu User ID (UID) của user test thành 1500 là:",
+        options: ["A. usermod -u 1500 test", "B. usermod -g 1500 test", "C. usermod -id 1500 test", "D. useradd -u 1500 test"],
+        ans: 0, explain: "usermod -u 1500 test (-u = UID)." },
+      { id: 109, part: "p6", isTrap: false,
+        q: "Lệnh đổi số hiệu Group ID (GID) của nhóm hocvien thành 2000 là:",
+        options: ["A. groupmod -g 2000 hocvien", "B. groupmod -u 2000 hocvien", "C. usermod -g 2000 hocvien", "D. gpasswd -g 2000 hocvien"],
+        ans: 0, explain: "groupmod -g 2000 hocvien (-g = GID của nhóm)." },
+      { id: 110, part: "p6", isTrap: false,
+        q: "Lệnh đổi tên một nhóm từ 'hocvien' thành 'sinhvien' là:",
+        options: ["A. groupmod -l sinhvien hocvien", "B. groupmod -n sinhvien hocvien", "C. usermod -n sinhvien hocvien", "D. groupadd -r sinhvien hocvien"],
+        ans: 1, explain: "groupmod -n <tên_mới> <tên_cũ> (-n = new name)." },
+
+      // P7: Câu 111 - 125
+      { id: 111, part: "p7", isTrap: true,
+        q: "[🚨 BẪY NGUY HIỂM 4] Thêm user vào nhóm phụ nếu gõ 'usermod -G nhom2 test' (QUÊN CỜ -a) thì hậu quả là gì?",
+        options: ["A. Báo lỗi cú pháp", "B. TOÀN BỘ CÁC NHÓM PHỤ CŨ BỊ XÓA SẠCH, chỉ còn lại nhóm mới", "C. Pass bị đổi", "D. Mất thư mục Home"],
+        ans: 1, explain: "BẪY 4: Nếu thiếu -a (append), lệnh -G sẽ ghi đè xóa sạch toàn bộ nhóm phụ cũ. BẮT BUỘC dùng: usermod -aG!" },
+      { id: 112, part: "p7", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 5] Đổi thư mục Home bằng 'usermod -d /home/moi test' mà QUÊN CỜ -m thì điều gì xảy ra?",
+        options: ["A. Tự động chuyển dữ liệu", "B. Chỉ đổi đường dẫn trong file passwd, thư mục thực tế không tồn tại, user login bị văng lỗi", "C. Từ chối đổi", "D. Máy bị treo"],
+        ans: 1, explain: "BẪY 5: Quên cờ -m thì thư mục mới không được tạo và dữ liệu không di chuyển. BẮT BUỘC dùng: usermod -d /home/moi -m test." },
+      { id: 113, part: "p7", isTrap: false,
+        q: "Lệnh kết hợp toàn diện để vừa đổi username sang sv2024, đổi Home sang /home/sv2024 và tự động dời dữ liệu là:",
+        options: ["A. usermod -l sv2024 -d /home/sv2024 test", "B. usermod -l sv2024 -d /home/sv2024 -m test", "C. useradd -l sv2024 -d /home/sv2024 -m test", "D. usermod -all sv2024 test"],
+        ans: 1, explain: "Cú pháp kết hợp: usermod -l sv2024 -d /home/sv2024 -m test." },
+      { id: 114, part: "p7", isTrap: true,
+        q: "[🚨 BẪY THI CỬ 6] Root gõ 'vi /home/test/baitap.c' tạo file cho sinh viên. Sinh viên mở lên sửa bị 'Permission denied'. Root phải xử lý thế nào?",
+        options: ["A. Format lại ổ", "B. Trả quyền cho user bằng lệnh: 'chown test:test /home/test/baitap.c'", "C. Đổi đuôi thành .txt", "D. Bảo sinh viên reboot máy"],
+        ans: 1, explain: "BẪY 6: File do root tạo thuộc root:root. Trả quyền bằng lệnh: chown test:test /home/test/baitap.c." },
+      { id: 115, part: "p7", isTrap: true,
+        q: "[🚨 CẢNH BÁO NGUY HIỂM] Tuyệt đối không bao giờ được phép gõ lệnh nào khi đang giữ quyền root vì sẽ phá hủy toàn bộ hệ điều hành?",
+        options: ["A. rm -rf /tmp/*", "B. rm -rf /", "C. clear", "D. userdel -r guest"],
+        ans: 1, explain: "rm -rf / xóa toàn bộ cây thư mục gốc và phá hủy hệ điều hành hoàn toàn!" },
+      { id: 116, part: "p7", isTrap: false,
+        q: "Trong fdisk, khi tạo phân vùng cuối cùng muốn lấy TOÀN BỘ dung lượng còn lại của ổ đĩa, tại Last sector ta làm gì?",
+        options: ["A. Gõ +10GB", "B. Nhấn phím [Enter] để nhận giá trị mặc định sector cuối cùng", "C. Gõ 10000", "D. Gõ max"],
+        ans: 1, explain: "Nhấn [Enter] tại Last sector để tự động nhận sector cuối cùng của ổ đĩa." },
+      { id: 117, part: "p7", isTrap: false,
+        q: "Điểm khác biệt giữa đổi nhóm chính và thêm nhóm phụ trong lệnh usermod là:",
+        options: ["A. Nhóm chính dùng -g (thường), nhóm phụ BẮT BUỘC dùng -aG (G hoa kèm a)", "B. Nhóm chính dùng -G, phụ dùng -g", "C. Thay thế cho nhau được", "D. Phải xóa user tạo lại"],
+        ans: 0, explain: "-g: Primary group (nhóm chính). -aG: Supplementary group (nhóm phụ append)." },
+      { id: 118, part: "p7", isTrap: false,
+        q: "Người dùng đang ở /home/test, gõ lệnh 'cd' (không tham số), vị trí mới sẽ là:",
+        options: ["A. Thư mục gốc /", "B. Thư mục Home của chính mình (/home/test)", "C. /tmp", "D. Báo lỗi"],
+        ans: 1, explain: "Lệnh cd đứng một mình luôn đưa về thư mục Home của user hiện tại." },
+      { id: 119, part: "p7", isTrap: false,
+        q: "Trong bảng phân vùng fdisk, loại phân vùng 'p' và 'e' viết tắt của từ gì?",
+        options: ["A. Private và Public", "B. Primary (chính) và Extended (mở rộng)", "C. Partition và Element", "D. Permanent và External"],
+        ans: 1, explain: "p = Primary (tối đa 4 phân vùng chính) và e = Extended (phân vùng mở rộng)." },
+      { id: 120, part: "p7", isTrap: false,
+        q: "Khi sao chép thư mục từ /var/data sang /backup, lệnh chuẩn xác là:",
+        options: ["A. cp /var/data /backup", "B. cp -r /var/data /backup", "C. mv /var/data /backup", "D. ln /var/data /backup"],
+        ans: 1, explain: "Sao chép thư mục bắt buộc phải có cờ -r (recursive): cp -r." },
+      { id: 121, part: "p7", isTrap: false,
+        q: "Dữ liệu của liên kết cứng (Hard Link) thực sự bị xóa khỏi đĩa khi nào?",
+        options: ["A. Ngay khi xóa file gốc", "B. Khi tất cả các liên kết trỏ tới Inode đó bị xóa hết (link count = 0)", "C. Sau khi reboot", "D. Sau 24h"],
+        ans: 1, explain: "Chỉ khi bộ đếm link count về 0 (tất cả các link bị xóa) thì dữ liệu mới thực sự bị giải phóng." },
+      { id: 122, part: "p7", isTrap: false,
+        q: "Để kiểm tra dung lượng còn trống của riêng phân vùng /dev/sda1, lệnh ngắn nhất là:",
+        options: ["A. df -h /dev/sda1", "B. fdisk -s /dev/sda1", "C. mkfs -check /dev/sda1", "D. ls -l /dev/sda1"],
+        ans: 0, explain: "df -h /dev/sda1 xem riêng dung lượng của phân vùng chỉ định." },
+      { id: 123, part: "p7", isTrap: false,
+        q: "Tại sao user thường không thể chuyển sang user khác bằng 'su <user>' nếu không biết mật khẩu của họ?",
+        options: ["A. Do hệ điều hành bảo vệ an toàn phân quyền danh tính", "B. Do CentOS không hỗ trợ", "C. Do thiếu cờ -f", "D. Chỉ root mới có pass"],
+        ans: 0, explain: "Bảo mật Linux: chỉ có root mới có đặc quyền chuyển user không cần mật khẩu. User thường bắt buộc phải có mật khẩu tài khoản đích." },
+      { id: 124, part: "p7", isTrap: false,
+        q: "Thư mục có quyền 750 (rwxr-x---), owner là john, group là devs. User alice không thuộc devs sẽ có quyền gì?",
+        options: ["A. Toàn quyền", "B. Chỉ đọc", "C. Hoàn toàn không có quyền gì (---)", "D. Tạo file"],
+        ans: 2, explain: "750 = rwx (owner) r-x (group) --- (others). Alice rơi vào Others nên không có quyền gì (0)." },
+      { id: 125, part: "p7", isTrap: true,
+        q: "[🚨 CHECKLIST VÀNG] Trước khi nộp bài thi thực hành, điều nào sau đây là quan trọng nhất?",
+        options: ["A. Tắt Terminal", "B. Kiểm tra whoami, pwd, đảm bảo đã cấp chmod +x file chạy, đã bấm w lưu fdisk, và đã chown trả quyền cho user nếu root tạo file", "C. Xóa /tmp", "D. Đổi pass root"],
+        ans: 1, explain: "10 điều checklist vàng: rà soát tài khoản (whoami), vị trí (pwd), chmod +x, w trong fdisk, và chown trả quyền." }
+    ];
+
+    // State
+    let userAnswers = {};
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function getFilteredQuestions() {
+      return quizData.filter(item => {
+        // Topic Filter
+        let matchFilter = true;
+        if (currentFilter === 'trap') matchFilter = item.isTrap;
+        else if (currentFilter !== 'all') matchFilter = item.part === currentFilter;
+
+        // Search Filter
+        let matchSearch = true;
+        if (searchQuery.trim() !== '') {
+          const qText = (item.q + " " + item.options.join(" ") + " " + item.explain).toLowerCase();
+          matchSearch = qText.includes(searchQuery.toLowerCase());
+        }
+
+        return matchFilter && matchSearch;
+      });
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-list');
+      const list = getFilteredQuestions();
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 bg-slate-800/40 rounded-2xl border border-slate-700/60">
+            <p class="text-slate-400 text-sm">Không tìm thấy câu hỏi phù hợp với bộ lọc hiện tại.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map((item, idx) => {
+        const answered = userAnswers[item.id] !== undefined;
+        const selectedOpt = userAnswers[item.id];
+        const isCorrect = selectedOpt === item.ans;
+
+        return `
+          <div class="bg-slate-800/70 border ${item.isTrap ? 'border-amber-500/40' : 'border-slate-700/70'} rounded-2xl p-5 shadow-sm transition hover:border-slate-600">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-bold ${item.isTrap ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-700 text-slate-300'}">
+                  Câu ${item.id}
+                </span>
+                ${item.isTrap ? '<span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-md font-semibold animate-pulse">🚨 Bẫy Phòng Thi</span>' : ''}
+                <span class="text-xs text-slate-400 uppercase tracking-wider">${item.part.toUpperCase()}</span>
+              </div>
+              ${answered ? (isCorrect ? '<span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2.5 py-1 rounded-full">✓ Chính xác</span>' : '<span class="text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-800 px-2.5 py-1 rounded-full">✗ Chưa đúng</span>') : ''}
+            </div>
+
+            <p class="text-slate-100 font-medium text-sm md:text-base mb-4 leading-relaxed">${item.q}</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+              ${item.options.map((opt, optIdx) => {
+                let btnClass = "bg-slate-900/80 border-slate-700 hover:bg-slate-700/60 text-slate-200";
+                
+                if (answered) {
+                  if (optIdx === item.ans) {
+                    btnClass = "bg-emerald-900/60 border-emerald-500 text-emerald-200 font-semibold shadow-sm";
+                  } else if (optIdx === selectedOpt && !isCorrect) {
+                    btnClass = "bg-rose-900/60 border-rose-500 text-rose-200";
+                  } else {
+                    btnClass = "opacity-40 bg-slate-900/50 border-slate-800 text-slate-400";
+                  }
+                }
+
+                return `
+                  <button onclick="selectOption(${item.id}, ${optIdx})" 
+                    ${answered ? 'disabled' : ''} 
+                    class="text-left p-3 rounded-xl border text-xs md:text-sm transition flex items-start gap-2 ${btnClass}">
+                    <span>${opt}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            ${answered ? `
+              <div class="mt-3 p-3.5 rounded-xl text-xs ${isCorrect ? 'bg-emerald-950/30 border border-emerald-800/60 text-emerald-300' : 'bg-rose-950/30 border border-rose-800/60 text-rose-200'}">
+                <div class="font-bold mb-1 flex items-center gap-1.5">
+                  <span>💡 Giải thích & Bẫy:</span>
+                </div>
+                <p class="leading-relaxed text-slate-300">${item.explain}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      updateStats();
+    }
+
+    function selectOption(qId, optIdx) {
+      if (userAnswers[qId] !== undefined) return;
+      userAnswers[qId] = optIdx;
+      renderQuiz();
+    }
+
+    function updateStats() {
+      const answeredKeys = Object.keys(userAnswers);
+      const totalAns = answeredKeys.length;
+      let correct = 0;
+
+      answeredKeys.forEach(id => {
+        const item = quizData.find(q => q.id === parseInt(id));
+        if (item && userAnswers[id] === item.ans) correct++;
+      });
+
+      const rate = totalAns > 0 ? Math.round((correct / totalAns) * 100) : 0;
+      const score = ((correct / 125) * 10).toFixed(1);
+
+      document.getElementById('answered-count').innerText = totalAns;
+      document.getElementById('correct-count').innerText = correct;
+      document.getElementById('accuracy-rate').innerText = rate + '%';
+      document.getElementById('score-val').innerText = score;
+
+      const progressPct = Math.round((totalAns / 125) * 100);
+      document.getElementById('progress-bar').style.width = progressPct + '%';
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-filter') === filter) {
+          btn.classList.add('bg-amber-500', 'text-slate-950');
+          btn.classList.remove('bg-slate-700', 'text-slate-300');
+        } else {
+          btn.classList.remove('bg-amber-500', 'text-slate-950');
+          btn.classList.add('bg-slate-700', 'text-slate-300');
+        }
+      });
+      renderQuiz();
+    }
+
+    function handleSearch() {
+      searchQuery = document.getElementById('search-input').value;
+      renderQuiz();
+    }
+
+    function resetQuiz() {
+      if (confirm("Bạn có chắc chắn muốn xóa toàn bộ kết quả để luyện tập lại từ đầu?")) {
+        userAnswers = {};
+        renderQuiz();
+      }
+    }
+
+    // Initial render
+    renderQuiz();
+  </script>
+</body>
+</html>
